@@ -11,7 +11,7 @@ body{
 
 header{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
 }
 
@@ -42,7 +42,12 @@ h1{
 }
 
 img{
-    width: 400px;
-    height: 400px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
+}
+
+.about-me{
+    font-size: 1.3rem;
+    width: 50%;
 }
