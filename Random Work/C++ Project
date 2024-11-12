@@ -1,0 +1,460 @@
+//  main.cpp
+//  Student Manager
+//  Created by Peter Cranston on 14/10/2024
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;//Using standard namespace
+
+struct Students {//Structure to hold student data
+    int ID;
+    string name;
+    double mark1, mark2, mark3, examMark;
+    double courseworkTotal;
+    double totalscore;
+    double percentage;
+};
+
+//Declaring functions
+int menu();
+int numValidate(int min, int max);
+void allRecords(const vector<Students> student, int size);
+void individualRecord(const vector<Students> student, int size);
+void highScore(const vector<Students> student, int size);
+void lowScore(const vector<Students> student, int size);
+void sortRecords(vector<Students> student, int size);
+void grade(int percentage);
+bool compareAscending(Students& a, Students& b);
+bool compareDescending(Students& a, Students& b);
+void addStudentRecord(vector<Students> p, int size);
+void removeStudentRecord(vector<Students> p, int size);
+void changeStudentRecord(vector<Students> p, int size);
+void writeToFile(vector<Students> w, int size);
+
+int main() {
+    int cont = 1;
+    
+    while (cont == 1) {//While loop to repeat the program until the user wants to stop
+        
+        //Declaring variables to be used with file handling
+        string line;
+        int counter  = 0;
+        int numOfStudents;
+
+        
+        ifstream inFile ("studentmarks1.txt");//Opening file for reading
+        
+        inFile >> numOfStudents;
+        
+        if (!inFile.is_open()) {
+            cout << "Error when opening file" << endl;
+        }
+
+        vector<Students> student(numOfStudents);
+
+        while (counter < numOfStudents) {//While loop to insert all student information into the student structure
+            char comma;
+            
+            inFile >> student[counter].ID >> comma;
+            
+            getline(inFile, student[counter].name, ',');
+
+            inFile >> student[counter].mark1 >> comma;
+
+            inFile >> student[counter].mark2 >> comma;
+                
+            inFile >> student[counter].mark3 >> comma;
+                    
+            inFile >> student[counter].examMark;
+                
+            student[counter].courseworkTotal = student[counter].mark1 + student[counter].mark2 + student[counter].mark3;
+            
+            student[counter].totalscore = student[counter].mark1 + student[counter].mark2 + student[counter].mark3 + student[counter].examMark;
+            
+            student[counter].percentage = (student[counter].totalscore / 160) * 100;//Calculates the student overall percentage based on the total score and the maximum potential score
+            
+            counter++;
+        }
+        inFile.close();//Closing file
+    
+        int userchoice = menu();//Function to display menu and get user input
+        
+        switch (userchoice) {//Switch to call functions depending on userchoice input
+            case 1:
+                allRecords(student, numOfStudents);
+                break;
+            case 2:
+                individualRecord(student, numOfStudents);
+                break;
+            case 3:
+                highScore(student, numOfStudents);
+                break;
+            case 4:
+                lowScore(student, numOfStudents);
+                break;
+            case 5:
+                sortRecords(student, numOfStudents);
+                break;
+            case 6:
+                addStudentRecord(student, numOfStudents);
+                break;
+            case 7:
+                removeStudentRecord(student, numOfStudents);
+                break;
+            case 8:
+                changeStudentRecord(student, numOfStudents);
+                break;
+        }
+        cout << "Would you like to go again? Yes(1) No(2): ";
+        cont = numValidate(1, 2);
+    }
+    
+    return 0;
+}
+
+int menu(){//Function to display menu and get input
+    cout << "-----------------------------------------------" << endl;
+    cout << "                      Menu                      " << endl;
+    cout << "-----------------------------------------------" << endl;
+    cout << "1. View all student records" << endl;
+    cout << "2. View individual student record" << endl;
+    cout << "3. Show student with highest total score" << endl;
+    cout << "4. Show student with lowest total score" << endl;
+    cout << "5. Sort student records" << endl;
+    cout << "6. Add student record" << endl;
+    cout << "7. Remove a student record" << endl;
+    cout << "8. Change a student record" << endl;
+    cout << "Enter choice: ";
+    int choice = numValidate(1, 8);
+    return choice;
+}
+
+void grade(int percentage){//Function to determine the grade the user got
+    switch (percentage/10) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            cout << "Grade: F" << endl;
+            break;
+        case 4:
+            cout << "Grade: D" << endl;
+            break;
+        case 5:
+            cout << "Grade: C" << endl;
+            break;
+        case 6:
+            cout << "Grade: B" << endl;
+            break;
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+            cout << "Grade: A" << endl;
+            break;
+        default:
+            break;
+    }
+}
+
+void allRecords(const vector<Students> p, int size){//Function to display all the students scores
+    for (int i = 0; i < size; i++) {//Loops through the structure
+        cout << "===============================" << endl;
+        cout << "Name: " << p[i].name << endl;
+        cout << "ID: " << p[i].ID << endl;
+        cout << "Total coursework mark: " << p[i].courseworkTotal << endl;
+        cout << "Exam Mark: " << p[i].examMark << endl;
+        cout << "Overall percentage: " << p[i].percentage << "%" << endl;
+        grade(p[i].percentage);
+    }
+    cout << "===============================" << endl;
+    cout << endl;
+}
+
+void individualRecord(const vector<Students> p, int size){//Function to get individual records based on who the user wanted to display
+    int input;
+    int outOfBounds = size;
+    cout << "Enter the ID of the user that you want the information of: ";
+    input = numValidate(1, 10000);
+    
+    for (int i = 0; i <= size; i++) {
+        if (input == p[i].ID) {
+            cout << "===============================" << endl;
+            cout << "Name: " << p[i].name << endl;
+            cout << "ID: " << p[i].ID << endl;
+            cout << "Total coursework mark: " << p[i].courseworkTotal << endl;
+            cout << "Exam Mark: " << p[i].examMark << endl;
+            cout << "Overall percentage: "<< p[i].percentage << "%" << endl;
+            grade(p[i].percentage);
+            cout << "===============================" << endl;
+            break;
+        }else if (i == outOfBounds){
+            cout << "No student record found" << endl;
+        }
+    }
+}
+
+void highScore(const vector<Students> p, int size){//Function to determine the user with the highest overall score and displays their information
+    int highest = 0;
+    
+    for (int i = 0; i < size; i++) {//Gets the highest score
+        if (p[i].totalscore > highest) {
+            highest = p[i].totalscore;
+        }
+    }
+    for (int i = 0; i < size; i++) {//Gets the student record based on the highest score
+        if (highest == p[i].totalscore) {
+            cout << "===============================" << endl;
+            cout << "Name: " << p[i].name << endl;
+            cout << "ID: " << p[i].ID << endl;
+            cout << "Total coursework mark: " << p[i].courseworkTotal << endl;
+            cout << "Exam Mark: " << p[i].examMark << endl;
+            cout << "Overall percentage: "<< p[i].percentage << "%" << endl;
+            grade(p[i].percentage);
+            cout << "===============================" << endl;
+        }
+    }
+}
+
+void lowScore(const vector<Students> p, int size){//Function to determine the user with the lowest overall score and displays their information
+    int lowest = 160;
+    
+    for (int i = 0; i < size; i++) {//Gets the lowest score
+        if (p[i].totalscore < lowest) {
+            lowest = p[i].totalscore;
+        }
+    }
+    for (int i = 0; i < size; i++) {//Gets the student record based on the highest score
+        if (lowest == p[i].totalscore) {
+            cout << "===============================" << endl;
+            cout << "Name: " << p[i].name << endl;
+            cout << "ID: " << p[i].ID << endl;
+            cout << "Total coursework mark: " << p[i].courseworkTotal << endl;
+            cout << "Exam Mark: " << p[i].examMark << endl;
+            cout << "Overall percentage: "<< p[i].percentage << "%" << endl;
+            grade(p[i].percentage);
+            cout << "===============================" << endl;
+        }
+    }
+}
+
+bool compareAscending(Students& a, Students& b){//Function to compare two students totalscores and return true if a < b
+    return a.totalscore < b.totalscore;
+}
+bool compareDescending(Students& a, Students& b){//Function to compare two students totalscores and return true if a > b
+    return a.totalscore > b.totalscore;
+}
+
+void sortRecords(vector<Students> p, int size){//Uses sort function and compare function to sort the structure array
+    int order = 0;
+    cout << "Low to high(1) or high to low(2)? ";//Getting user input for which way the order should show
+    order = numValidate(1, 2);
+    if (order == 1) {
+        sort(p.begin(), p.end(), compareAscending);
+    }else{
+        sort(p.begin(), p.end(), compareDescending);
+    }
+    for (int i = 0; i < size; i++) {//Loops through the structure
+        cout << "===============================" << endl;
+        cout << "Name: " << p[i].name << endl;
+        cout << "ID: " << p[i].ID << endl;
+        cout << "Total coursework mark: " << p[i].courseworkTotal << endl;
+        cout << "Exam Mark: " << p[i].examMark << endl;
+        cout << "Overall percentage: " << p[i].percentage << "%" << endl;
+        grade(p[i].percentage);
+    }
+}
+
+void addStudentRecord(vector<Students> p, int size){//Function to add a student record
+    int ID;
+    string name;
+    double mark1, mark2, mark3, examMark;
+    cout << "ID: ";
+    ID = numValidate(1, 10000);
+    cin.ignore();
+    cout << "Name: ";
+    getline(cin, name);
+    cout << "Mark 1: ";
+    mark1 = numValidate(0, 20);
+    cout << "Mark 2: ";
+    mark2 = numValidate(0, 20);
+    cout << "Mark 3: ";
+    mark3 = numValidate(0, 20);
+    cout << "Exam Mark: ";
+    examMark = numValidate(0, 100);
+    cout << endl;
+    
+    double courseWorkTotal = mark1 + mark2 + mark3;
+    double totalScore = mark1 + mark2 + mark3 + examMark;
+    double percentage = (totalScore / 160) * 100;
+    
+    p.push_back({ID, name, mark1, mark2, mark3, examMark, courseWorkTotal, totalScore, percentage});
+    
+    writeToFile(p, size+1);
+    
+}
+
+void removeStudentRecord(vector<Students> p, int size){//Function to remove a student record
+    ofstream outFile("studentmarks1.txt");//Opening file for writing
+    
+    int ID;
+    int line = 0;
+    cout << "Enter the ID of the student you would like to remove: ";
+    ID = numValidate(1, 10000);
+    
+    for (int i = 0; i < size; i++) {//Used to get the specific line that the user wants to delete
+        if (ID == p[i].ID) {
+            break;
+        }
+        line++;
+    }
+    
+    outFile << size-1 << '\n';
+    for (int i = 0 ; i < size; i++) {//used to re-add all the records to the file, except the chosen record
+        if (i != line) {
+            outFile << p[i].ID << ',';
+            outFile << p[i].name << ',';
+            outFile << p[i].mark1 << ',';
+            outFile << p[i].mark2 << ',';
+            outFile << p[i].mark3 << ',';
+            outFile << p[i].examMark << '\n';
+        }
+    }
+    outFile.close();
+}
+
+void changeStudentRecord(vector<Students> p, int size){//Function to change a student record
+
+    int ID;
+    string name;
+    double mark1, mark2, mark3, examMark;
+    int choiceOfChange;
+    
+    cout << "Enter the ID of the student you would like to modify: ";
+    ID = numValidate(1, 10000);
+    
+    for (int i = 0; i < size; i++) {
+        if (ID == p[i].ID) {//Prints the student record that will be changed
+            cout << "===============================" << endl;
+            cout << "Name: " << p[i].name << endl;
+            cout << "ID: " << p[i].ID << endl;
+            cout << "Mark 1: " << p[i].mark1 << endl;
+            cout << "Mark 2: " << p[i].mark2 << endl;
+            cout << "Mark 3: " << p[i].mark3 << endl;
+            cout << "Exam Mark: " << p[i].examMark << endl;
+            cout << "===============================" << endl;
+            
+            cout << "What would you like to change?" << endl;
+            cout << "1. Name \n";
+            cout << "2. ID \n";
+            cout << "3. Mark 1 \n";
+            cout << "4. Mark 2 \n";
+            cout << "5. Mark 3 \n";
+            cout << "6. Exam Mark \n";
+            cout << "7. Everything \n";
+            cout << "Choice: ";
+            cin >> choiceOfChange;
+            
+            switch (choiceOfChange) {//Gives the user the choice to change whatever they want in the structured vector
+                case 1:
+                    cin.ignore();
+                    cout << "Change name to: ";
+                    getline(cin, name);
+                    p[i].name = name;
+                    break;
+                case 2:
+                    cout << "Change ID to: ";
+                    ID = numValidate(1, 10000);
+                    p[i].ID = ID;
+                    break;
+                case 3:
+                    cout << "Change mark 1 to: ";
+                    mark1 = numValidate(0, 20);
+                    p[i].mark1 = mark1;
+                    break;
+                case 4:
+                    cout << "Change mark 2 to: ";
+                    mark2 = numValidate(0, 20);
+                    p[i].mark2 = mark2;
+                    break;
+                case 5:
+                    cout << "Change mark 3 to: ";
+                    mark3 = numValidate(0, 20);
+                    p[i].mark3 = mark3;
+                    break;
+                case 6:
+                    cout << "Change exam mark to: ";
+                    examMark = numValidate(0, 100);
+                    p[i].examMark = examMark;
+                    break;
+                case 7:
+                    //Changes all the structured vector members of the chosen record
+                    cout << "CHANGE TO" << endl;//Gets all the user input to change the record
+                    cout << "ID: ";
+                    ID = numValidate(1, 10000);
+                    cin.ignore();
+                    cout << "Name: ";
+                    getline(cin, name);
+                    cout << "Mark 1: ";
+                    mark1 = numValidate(0, 20);
+                    cout << "Mark 2: ";
+                    mark2 = numValidate(0, 20);
+                    cout << "Mark 3: ";
+                    mark3 = numValidate(0, 20);
+                    cout << "Exam Mark: ";
+                    examMark = numValidate(0, 100);
+                    cout << endl;
+                    
+                    p[i].name = name;
+                    p[i].ID = ID;
+                    p[i].mark1 = mark1;
+                    p[i].mark2 = mark2;
+                    p[i].mark3 = mark3;
+                    p[i].examMark = examMark;
+                    break;
+                default:
+                    break;
+            }
+            
+            
+        }
+    }
+    
+    //Outputs the entire structure array to the file, with the changed record
+    writeToFile(p, size);
+}
+
+int numValidate(int min, int max){//Number validator function to get all number user input
+    int x;
+    cin >> x;
+    while (cin.fail() || x < min || x > max) {
+        cout << "Invalid input" << endl;
+        cin.clear(); //clear bad input flag
+        cin.ignore(1000, '\n'); //ignore input
+        cout << "Try again: ";
+        cin >> x; //get number again
+      }
+    return x;
+}
+
+void writeToFile(vector<Students> p, int size){
+    ofstream outFile("studentmarks1.txt");
+    
+    outFile << size << '\n';
+    for (int i = 0 ; i < size; i++) {
+        outFile << p[i].ID << ',';
+        outFile << p[i].name << ',';
+        outFile << p[i].mark1 << ',';
+        outFile << p[i].mark2 << ',';
+        outFile << p[i].mark3 << ',';
+        outFile << p[i].examMark << '\n';
+    }
+    outFile.close();
+}
+
+
+//Add counter for high and low to remove some code, and then use that to output the student data. Can use paramater to decide between high or low and do it all in one function to improve it more. // I Don't think this would work if i tried to implement it, due to the way that i am comparing the marks.
