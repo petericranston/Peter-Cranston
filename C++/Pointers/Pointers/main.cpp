@@ -16,17 +16,18 @@ void smartPointers();
 
 class Player {
     
-public:
-    Player(){
-        cout << "Player created" << endl;
-    }
-    ~Player(){
-        cout << "Player Destroyed" << endl;
-    }
-    
-    void run(){
-        cout << "Player is running" << endl;
-    }
+    public:
+        
+        Player(){
+            cout << "Player created" << endl;
+        }
+        ~Player(){
+            cout << "Player Destroyed" << endl;
+        }
+        
+        void run(){
+            cout << "Player is running" << endl;
+        }
 };
 
 
@@ -34,7 +35,6 @@ int main() {
     smartPointers();
     return 0;
 }
-
 
 void pointers() {
     //    int x = 2;
@@ -60,7 +60,7 @@ void pointers() {
 
 void smartPointers(){
     {
-        unique_ptr<Player>entity = make_unique<Player>(new Player);
+        unique_ptr<Player>entity = make_unique<Player>();
         
         entity->run();
     }
