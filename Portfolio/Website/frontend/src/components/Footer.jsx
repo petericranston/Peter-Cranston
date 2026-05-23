@@ -101,6 +101,8 @@ export function Footer() {
               <a
                 key={name}
                 href="#"
+                target="_blank"
+                rel="noopener noreferrer"
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.color = "var(--ink)")
                 }

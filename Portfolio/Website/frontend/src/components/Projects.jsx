@@ -204,6 +204,8 @@ function ProjectScene({ project }) {
 
           <a
             href={project.href}
+            target={project.teaser ? undefined : "_blank"}
+            rel={project.teaser ? undefined : "noopener noreferrer"}
             style={{
               marginTop: 12,
               display: "inline-flex",
