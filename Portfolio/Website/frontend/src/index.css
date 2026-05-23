@@ -1,0 +1,73 @@
+:root {
+  --cream: #F5F1E8;
+  --cream-2: #EEE9DC;
+  --ink: #1F1F24;
+  --ink-soft: #45454D;
+  --slate: #6E7E92;
+  --sage: #919E89;
+  --clay: #A78268;
+  --rule: rgba(31, 31, 36, 0.12);
+  --muted: #8A857A;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Geist', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+@media (max-width: 720px) {
+  .container {
+    padding: 0 24px;
+  }
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(110, 126, 146, 0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(110, 126, 146, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(110, 126, 146, 0); }
+}
+
+@keyframes cueLine {
+  0%, 100% { transform: scaleX(0.3); }
+  50%       { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

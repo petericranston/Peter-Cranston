@@ -1,0 +1,90 @@
+/* =====================================================
+   RESPONSIVE OVERRIDES
+   All layout-critical breakpoints live here so they
+   can override inline styles via !important.
+   ===================================================== */
+
+/* ---- Nav ---- */
+@media (max-width: 720px) {
+  .nav-wrap {
+    padding: 16px 24px !important;
+  }
+}
+
+/* ---- Hero ---- */
+@media (max-width: 900px) {
+  .hero-section {
+    padding: 120px 0 80px !important;
+  }
+}
+@media (max-width: 720px) {
+  .hero-section {
+    padding: 100px 0 72px !important;
+  }
+  .scroll-cue {
+    left: 24px !important;
+    bottom: 20px !important;
+  }
+}
+
+/* ---- Projects header ---- */
+@media (max-width: 900px) {
+  .projects-header {
+    padding-top: 100px !important;
+    padding-bottom: 56px !important;
+  }
+}
+@media (max-width: 720px) {
+  .projects-header {
+    padding-top: 80px !important;
+    padding-bottom: 40px !important;
+    gap: 16px !important;
+  }
+}
+
+/* ---- Project sections ---- */
+@media (max-width: 900px) {
+  .project-section {
+    padding: 64px 0 !important;
+  }
+  .project-grid {
+    grid-template-columns: 1fr !important;
+    gap: 48px !important;
+  }
+  .project-left-sticky {
+    position: static !important;
+  }
+}
+@media (max-width: 720px) {
+  .project-section {
+    padding: 48px 0 !important;
+  }
+  .project-grid {
+    gap: 36px !important;
+  }
+}
+
+/* ---- Mobile phone mocks ---- */
+/* At tablet: phones side-by-side are 458px — fine up to ~540px content width */
+@media (max-width: 540px) {
+  .mobile-phone-2 {
+    display: none !important;
+  }
+  .mobile-phones {
+    justify-content: center !important;
+  }
+}
+
+/* ---- Footer ---- */
+@media (max-width: 900px) {
+  .footer-section {
+    padding: 100px 0 48px !important;
+    margin-top: 60px !important;
+  }
+}
+@media (max-width: 720px) {
+  .footer-section {
+    padding: 80px 0 40px !important;
+    margin-top: 48px !important;
+  }
+}
