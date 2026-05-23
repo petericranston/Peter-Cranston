@@ -1,4 +1,9 @@
-const SOCIALS = ["GitHub", "LinkedIn", "Read.cv", "X / Twitter"];
+const SOCIALS = [
+  { name: "GitHub", href: "https://github.com/petericranston" },
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/peter-cranston-7410b22a0" },
+  { name: "Read.cv", href: "#" },
+  { name: "X / Twitter", href: "#" },
+];
 
 export function Footer() {
   return (
@@ -97,10 +102,10 @@ export function Footer() {
               color: "var(--ink-soft)",
             }}
           >
-            {SOCIALS.map((name) => (
+            {SOCIALS.map(({ name, href }) => (
               <a
                 key={name}
-                href="#"
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
                 onMouseEnter={(e) =>
