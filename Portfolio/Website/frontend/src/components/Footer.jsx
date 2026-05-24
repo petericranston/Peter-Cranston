@@ -4,8 +4,7 @@ const SOCIALS = [
     name: "LinkedIn",
     href: "https://www.linkedin.com/in/peter-cranston-7410b22a0",
   },
-  { name: "Read.cv", href: "#" },
-  { name: "X / Twitter", href: "#" },
+  { name: "Résumé", href: "/cv.pdf" },
 ];
 
 export function Footer() {
@@ -130,7 +129,7 @@ export function Footer() {
               letterSpacing: "0.04em",
             }}
           >
-            © 2026 Peter Cranston · Edinburgh
+            © 2026 Peter Cranston · Crowthorne
           </div>
         </div>
       </div>

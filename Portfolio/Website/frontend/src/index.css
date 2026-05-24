@@ -75,6 +75,63 @@ a {
   .container {
     padding: 0 24px;
   }
+
+  .nav-wrap {
+    padding: 16px 24px !important;
+  }
+
+  .hero-section {
+    min-height: unset !important;
+    padding: 80px 0 60px !important;
+    justify-content: flex-start !important;
+  }
+
+  .scroll-cue {
+    left: 24px !important;
+  }
+
+  #about {
+    padding: 72px 0 !important;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+  }
+
+  .projects-header {
+    padding-top: 80px !important;
+    padding-bottom: 48px !important;
+  }
+
+  .project-section {
+    padding: 56px 0 !important;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+
+  .project-left-sticky {
+    position: static !important;
+  }
+
+  .project-left-sticky h3 {
+    font-size: clamp(36px, 10vw, 48px) !important;
+  }
+
+  .mobile-phones {
+    overflow: hidden;
+  }
+
+  .mobile-phone-2 {
+    display: none !important;
+  }
+
+  .footer-section {
+    padding: 80px 0 40px !important;
+  }
 }
 
 @keyframes pulse {

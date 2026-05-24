@@ -249,7 +249,7 @@ function ProjectScene({ project }) {
         >
           <p
             style={{
-              fontSize: 19,
+              fontSize: "clamp(16px, 4.5vw, 19px)",
               lineHeight: 1.55,
               color: "var(--ink-soft)",
               maxWidth: 520,
