@@ -87,6 +87,7 @@ export function Hero() {
         >
           Software{" "}
           <span
+            key={wordIdx}
             style={{
               display: "inline-block",
               minWidth: 110,
@@ -94,6 +95,7 @@ export function Hero() {
               fontStyle: "italic",
               fontFamily: "Bricolage Grotesque, serif",
               fontWeight: 500,
+              animation: "wordFadeIn 0.35s cubic-bezier(.2,.7,.2,1) forwards",
             }}
           >
             {ROTATING[wordIdx]}

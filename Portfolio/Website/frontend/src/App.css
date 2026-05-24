@@ -75,6 +75,14 @@
   }
 }
 
+/* ---- About ---- */
+@media (max-width: 900px) {
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+}
+
 /* ---- Footer ---- */
 @media (max-width: 900px) {
   .footer-section {

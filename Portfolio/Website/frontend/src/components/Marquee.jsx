@@ -4,24 +4,40 @@ const WORDS = ["design", "engineering", "prototypes", "shipping", "systems"];
 
 export function Marquee() {
   const trackRef = useRef(null);
+  const firstRepeatRef = useRef(null);
   const offset = useRef(0);
   const speedBoost = useRef(0);
   const lastY = useRef(0);
+  const loopWidth = useRef(0);
+  const rafRef = useRef(null);
   const SPEED_BASE = 0.35;
 
   useEffect(() => {
-    let raf;
-    const tick = () => {
-      offset.current -= SPEED_BASE + speedBoost.current;
-      if (trackRef.current) {
-        const w = trackRef.current.scrollWidth / 2;
-        if (-offset.current >= w) offset.current += w;
-        trackRef.current.style.transform = `translateX(${offset.current}px)`;
-      }
-      speedBoost.current *= 0.92;
-      raf = requestAnimationFrame(tick);
+    let cancelled = false;
+
+    const measure = () => {
+      if (!trackRef.current || !firstRepeatRef.current) return;
+      loopWidth.current =
+        firstRepeatRef.current.getBoundingClientRect().left -
+        trackRef.current.getBoundingClientRect().left;
     };
-    raf = requestAnimationFrame(tick);
+
+    const tick = () => {
+      if (!trackRef.current) return;
+      offset.current -= SPEED_BASE + speedBoost.current;
+      if (loopWidth.current > 0 && -offset.current >= loopWidth.current) {
+        offset.current += loopWidth.current;
+      }
+      trackRef.current.style.transform = `translateX(${offset.current}px)`;
+      speedBoost.current *= 0.92;
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    document.fonts.ready.then(() => {
+      if (cancelled) return;
+      measure();
+      rafRef.current = requestAnimationFrame(tick);
+    });
 
     const onScroll = () => {
       const y = window.scrollY;
@@ -30,9 +46,15 @@ export function Marquee() {
       lastY.current = y;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+
     return () => {
-      cancelAnimationFrame(raf);
+      cancelled = true;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -65,6 +87,7 @@ export function Marquee() {
         {items.map((word, i) => (
           <span
             key={i}
+            ref={i === WORDS.length ? firstRepeatRef : undefined}
             style={{ display: "inline-flex", alignItems: "center", gap: 56 }}
           >
             <span

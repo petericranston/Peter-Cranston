@@ -1,6 +1,9 @@
 const SOCIALS = [
   { name: "GitHub", href: "https://github.com/petericranston" },
-  { name: "LinkedIn", href: "https://www.linkedin.com/in/peter-cranston-7410b22a0" },
+  {
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/in/peter-cranston-7410b22a0",
+  },
   { name: "Read.cv", href: "#" },
   { name: "X / Twitter", href: "#" },
 ];

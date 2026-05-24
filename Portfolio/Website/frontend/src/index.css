@@ -10,6 +10,30 @@
   --muted: #8A857A;
 }
 
+/* system preference used as default before JS sets data-theme */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cream: #111113;
+    --cream-2: #18181C;
+    --ink: #F0EDE6;
+    --ink-soft: #A8A4A0;
+    --slate: #7A8FA3;
+    --rule: rgba(240, 237, 230, 0.1);
+    --muted: #706A62;
+  }
+}
+
+/* manual override */
+[data-theme="dark"] {
+  --cream: #111113;
+  --cream-2: #18181C;
+  --ink: #F0EDE6;
+  --ink-soft: #A8A4A0;
+  --slate: #7A8FA3;
+  --rule: rgba(240, 237, 230, 0.1);
+  --muted: #706A62;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -62,6 +86,11 @@ a {
 @keyframes cueLine {
   0%, 100% { transform: scaleX(0.3); }
   50%       { transform: scaleX(1); }
+}
+
+@keyframes wordFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
