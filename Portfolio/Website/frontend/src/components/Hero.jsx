@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useScrollY } from "../hooks/useScrollY";
 
-const ROTATING = ["developer", "tinkerer", "designer", "builder"];
+const ROTATING = ["developer", "designer", "builder"];
 
 export function Hero() {
   const y = useScrollY();

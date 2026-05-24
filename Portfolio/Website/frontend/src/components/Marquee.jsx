@@ -58,7 +58,7 @@ export function Marquee() {
     };
   }, []);
 
-  const items = [...WORDS, ...WORDS];
+  const items = Array.from({ length: 8 }, () => WORDS).flat();
 
   return (
     <div
