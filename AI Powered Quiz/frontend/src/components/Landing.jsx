@@ -1,21 +1,28 @@
-import { useState } from 'react'
-import { TOPICS } from '../data/topics.jsx'
-import { ArrowRight, SparkIcon } from '../icons.jsx'
+import { useState } from "react";
+import { TOPICS } from "../data/topics.jsx";
+import { ArrowRight, SparkIcon } from "../icons.jsx";
 
 export default function Landing({ onPickTopic, onCustom }) {
-  const [custom, setCustom] = useState("")
+  const [custom, setCustom] = useState("");
 
   const submit = (e) => {
-    e.preventDefault()
-    const t = custom.trim()
-    if (t) onCustom(t)
-  }
+    e.preventDefault();
+    const t = custom.trim();
+    if (t) onCustom(t);
+  };
 
   return (
     <main className="screen landing">
       <header className="lp-header">
-        <h1 className="lp-title">What do you feel like<br />knowing more about?</h1>
-        <p className="lp-tag">Pick a topic, or tell us what's on your mind — we'll write a fresh quiz on the spot.</p>
+        <h1 className="lp-title">
+          What do you feel like
+          <br />
+          quizzing more about?
+        </h1>
+        <p className="lp-tag">
+          Pick a topic, or tell us what's on your mind — we'll write a fresh
+          quiz on the spot.
+        </p>
       </header>
 
       <section className="topic-grid" aria-label="Quiz topics">
@@ -42,7 +49,7 @@ export default function Landing({ onPickTopic, onCustom }) {
       <form className="custom-row" onSubmit={submit}>
         <label htmlFor="custom-topic" className="custom-label">
           <SparkIcon className="custom-spark" />
-          <span>Or quiz me on anything…</span>
+          <span>Or choose on anything…</span>
         </label>
         <div className="custom-field">
           <input
@@ -61,8 +68,8 @@ export default function Landing({ onPickTopic, onCustom }) {
       </form>
 
       <footer className="lp-foot">
-        <span>Ten questions · No timer · Just curiosity</span>
+        <span>Ten questions · No timer </span>
       </footer>
     </main>
-  )
+  );
 }
