@@ -1,12 +1,121 @@
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ─── Tokens ────────────────────────────────────────────────────────────── */
+:root {
+  --bg: oklch(0.985 0.005 85);
+  --bg-soft: oklch(0.97 0.006 85);
+  --surface: #ffffff;
+  --ink: oklch(0.18 0.012 80);
+  --ink-2: oklch(0.32 0.012 80);
+  --muted: oklch(0.55 0.012 80);
+  --faint: oklch(0.72 0.008 80);
+  --hairline: oklch(0.92 0.006 85);
+  --hairline-strong: oklch(0.86 0.008 85);
+
+  --accent: oklch(0.46 0.18 265);
+  --accent-press: oklch(0.40 0.18 265);
+  --accent-tint: oklch(0.96 0.04 265);
+  --accent-ring: oklch(0.46 0.18 265 / 0.22);
+  --on-accent: oklch(0.985 0.005 85);
+
+  --right: oklch(0.52 0.13 160);
+  --right-tint: oklch(0.96 0.045 160);
+  --wrong: oklch(0.55 0.19 28);
+  --wrong-tint: oklch(0.96 0.04 28);
+
+  --radius-card: 18px;
+  --radius-pill: 999px;
+  --radius-sm: 10px;
+
+  --shadow-card: 0 1px 0 oklch(0.92 0.006 85), 0 8px 24px -16px oklch(0.18 0.012 80 / 0.10);
+  --shadow-card-hover: 0 1px 0 oklch(0.88 0.008 85), 0 14px 34px -18px oklch(0.18 0.012 80 / 0.18);
+
+  --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
+  --sans: "Geist", "Söhne", "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --h: 265;
 }
 
+/* Topic tokens — resolved at each scope that sets --h */
+.topic-card,
+.screen.subtopics,
+.screen.quiz,
+.screen.results {
+  --topic: oklch(0.5 0.16 var(--h));
+  --topic-deep: oklch(0.42 0.17 var(--h));
+  --topic-tint: oklch(0.955 0.045 var(--h));
+  --topic-tint-deep: oklch(0.92 0.07 var(--h));
+  --topic-ring: oklch(0.5 0.16 var(--h) / 0.22);
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #0f0f0f;
-  color: #efefef;
-  min-height: 100vh;
+  font-family: var(--sans);
+  font-feature-settings: "ss01", "cv11";
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+input { font: inherit; color: inherit; background: none; border: 0; padding: 0; }
+input:focus { outline: none; }
+svg { display: block; }
+
+/* Background texture: warm tinted radial washes from each corner */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 760px at 8% -6%, oklch(0.93 0.05 55 / 0.55), transparent 60%),
+    radial-gradient(1000px 700px at 100% 0%, oklch(0.93 0.05 290 / 0.42), transparent 65%),
+    radial-gradient(900px 700px at 100% 110%, oklch(0.93 0.05 165 / 0.45), transparent 65%),
+    radial-gradient(900px 700px at -5% 100%, oklch(0.93 0.05 340 / 0.4), transparent 65%);
+  z-index: -1;
+  transition: opacity 320ms ease;
+}
+
+/* Hide the multi-colour wash on subtopic/quiz screens */
+body:has(.screen.subtopics)::before,
+body:has(.screen.quiz)::before { opacity: 0; }
+
+/* Per-topic wash on subtopic and quiz screens */
+.screen.subtopics::before,
+.screen.quiz::before {
+  content: "";
+  position: fixed; inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1300px 820px at 10% -8%, oklch(0.93 0.09 var(--h) / 0.75), transparent 62%),
+    radial-gradient(1100px 760px at 100% 0%, oklch(0.92 0.07 var(--h) / 0.55), transparent 65%),
+    radial-gradient(1000px 800px at 100% 110%, oklch(0.94 0.06 var(--h) / 0.5), transparent 65%),
+    radial-gradient(900px 700px at -5% 100%, oklch(0.95 0.05 var(--h) / 0.45), transparent 65%);
+}
+
+/* ─── App shell + transitions ───────────────────────────────────────────── */
+.app {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.app.phase-in  { opacity: 1; transform: translateY(0); }
+.app.phase-out { opacity: 0; transform: translateY(6px); }
+
+.screen {
+  width: 100%;
+  max-width: 1120px;
+  padding: 32px 24px 80px;
+  display: flex;
+  flex-direction: column;
 }
