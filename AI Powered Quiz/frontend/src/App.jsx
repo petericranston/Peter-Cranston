@@ -7,8 +7,10 @@ import Quiz from './components/Quiz.jsx'
 import Results from './components/Results.jsx'
 import TopicModal from './components/TopicModal.jsx'
 
+const API_BASE = import.meta.env.VITE_API_URL ?? ''
+
 async function fetchQuestions(topic) {
-  const res = await fetch('/api/quiz', {
+  const res = await fetch(`${API_BASE}/api/quiz`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ topic }),
