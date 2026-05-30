@@ -7,7 +7,11 @@ const app = express()
 const PORT = process.env.PORT || 3001
 const client = new Anthropic()
 
-app.use(cors({ origin: /^http:\/\/localhost:\d+$/ }))
+const allowedOrigins = [
+  /^http:\/\/localhost:\d+$/,
+  process.env.FRONTEND_URL,
+].filter(Boolean)
+app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
 app.get('/api/health', (req, res) => {
