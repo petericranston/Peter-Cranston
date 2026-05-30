@@ -11,7 +11,7 @@ export const TOPICS = [
         <path d="M17 3c0 5-10 5-10 9s10 4 10 9" />
       </svg>
     ),
-    subs: ["Ancient Rome", "World War II", "Ancient Egypt", "The Cold War", "Medieval Europe", "The Renaissance", "The American Revolution", "Industrial Age"]
+    subs: ["The Tudors", "World War II", "The Plantagenets", "The Cold War", "Medieval Europe", "The Renaissance", "The American Revolution", "Industrial Age"]
   },
   {
     name: "Science & Nature",
