@@ -39,7 +39,10 @@
 .topic-card,
 .screen.subtopics,
 .screen.quiz,
-.screen.results {
+.screen.results,
+.screen.mp-quiz,
+.screen.mp-leaderboard,
+.mp-topic-chip {
   --topic: oklch(0.5 0.16 var(--h));
   --topic-deep: oklch(0.42 0.17 var(--h));
   --topic-tint: oklch(0.955 0.045 var(--h));
