@@ -161,7 +161,7 @@ export default function MultiplayerLobby({ room, onStart, onLeave, error, clearE
                   type="text"
                   placeholder="e.g. 90s cartoons, space exploration…"
                   maxLength={100}
-                  value={custom}
+                  value={topic}
                   onChange={handleCustomChange}
                   autoComplete="off"
                 />
