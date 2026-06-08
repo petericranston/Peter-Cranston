@@ -959,8 +959,58 @@
   border-color: oklch(0.5 0.16 var(--h) / 0.5);
   color: oklch(0.42 0.17 var(--h));
 }
-.mp-chip-icon { font-size: 16px; display: flex; align-items: center; }
+.mp-chip-icon { font-size: 16px; display: flex; align-items: center; flex-shrink: 0; }
 .mp-chip-icon svg { width: 16px; height: 16px; }
+
+/* Subtopics panel (slides open) */
+.mp-subs-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 240ms ease;
+}
+.mp-subs-panel.is-open { grid-template-rows: 1fr; }
+.mp-subs-inner { overflow: hidden; }
+.mp-subs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+  padding: 10px 0 4px;
+}
+.mp-sub-btn {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 450;
+  color: var(--ink-2);
+  box-shadow: var(--shadow-card);
+  transition: border-color 130ms, background 130ms, color 130ms, transform 130ms;
+  position: relative;
+  overflow: hidden;
+}
+.mp-sub-btn::before {
+  content: "";
+  position: absolute; inset: 0 auto 0 0;
+  width: 3px;
+  background: oklch(0.5 0.16 var(--h));
+  opacity: 0;
+  transition: opacity 130ms;
+}
+.mp-sub-btn:hover {
+  border-color: oklch(0.5 0.16 var(--h) / 0.35);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+.mp-sub-btn:hover::before { opacity: 1; }
+.mp-sub-btn.is-selected {
+  background: oklch(0.96 0.04 var(--h));
+  border-color: oklch(0.5 0.16 var(--h) / 0.45);
+  color: oklch(0.42 0.17 var(--h));
+  font-weight: 500;
+}
+.mp-sub-btn.is-selected::before { opacity: 1; }
 
 .mp-or-row {
   display: flex; align-items: center; gap: 12px;

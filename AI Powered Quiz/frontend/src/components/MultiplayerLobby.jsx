@@ -3,24 +3,46 @@ import { ArrowLeft, ArrowRight, SparkIcon } from '../icons.jsx'
 import { TOPICS } from '../data/topics.jsx'
 
 export default function MultiplayerLobby({ room, onStart, onLeave, error, clearError }) {
-  const [topic, setTopic]     = useState('')
-  const [selHue, setSelHue]   = useState(265)
-  const [copied, setCopied]   = useState(false)
+  const [umbrella, setUmbrella] = useState(null)   // selected TOPICS entry
+  const [sub, setSub]           = useState(null)   // selected subtopic string
+  const [custom, setCustom]     = useState('')
+  const [copied, setCopied]     = useState(false)
 
   const isHost = room.myId === room.hostId
-  const me     = room.players.find(p => p.id === room.myId)
 
-  function selectPreset(t) {
-    setTopic(t.name)
-    setSelHue(t.hue)
+  // Derived: what we'll send to the server
+  const topic  = sub ? `${umbrella.name} — ${sub}` : custom.trim()
+  const selHue = umbrella?.hue ?? 265
+
+  function pickUmbrella(t) {
+    if (umbrella?.name === t.name) {
+      // Second click collapses it
+      setUmbrella(null)
+      setSub(null)
+    } else {
+      setUmbrella(t)
+      setSub(null)
+      setCustom('')
+      clearError()
+    }
+  }
+
+  function pickSub(s) {
+    setSub(s)
+    clearError()
+  }
+
+  function handleCustomChange(e) {
+    setCustom(e.target.value)
+    setUmbrella(null)
+    setSub(null)
     clearError()
   }
 
   function handleStart(e) {
     e.preventDefault()
-    const t = topic.trim()
-    if (!t) return
-    onStart(t, selHue)
+    if (!topic) return
+    onStart(topic, selHue)
   }
 
   function copyCode() {
@@ -88,19 +110,42 @@ export default function MultiplayerLobby({ room, onStart, onLeave, error, clearE
           {isHost ? (
             <form className="mp-topic-form" onSubmit={handleStart}>
               <span className="mp-section-label">Choose a topic</span>
+
+              {/* Umbrella topic chips */}
               <div className="mp-topic-chips">
                 {TOPICS.map(t => (
                   <button
                     key={t.name}
                     type="button"
-                    className={`mp-topic-chip ${topic === t.name ? 'is-selected' : ''}`}
+                    className={`mp-topic-chip ${umbrella?.name === t.name ? 'is-selected' : ''}`}
                     style={{ '--h': t.hue }}
-                    onClick={() => selectPreset(t)}
+                    onClick={() => pickUmbrella(t)}
                   >
                     <span className="mp-chip-icon">{t.icon}</span>
                     <span>{t.name}</span>
+                    <ChevronIcon open={umbrella?.name === t.name} />
                   </button>
                 ))}
+              </div>
+
+              {/* Subtopics panel — slides open when an umbrella is selected */}
+              <div className={`mp-subs-panel ${umbrella ? 'is-open' : ''}`}>
+                <div className="mp-subs-inner">
+                  {umbrella && (
+                    <div className="mp-subs-grid" style={{ '--h': umbrella.hue }}>
+                      {umbrella.subs.map(s => (
+                        <button
+                          key={s}
+                          type="button"
+                          className={`mp-sub-btn ${sub === s ? 'is-selected' : ''}`}
+                          onClick={() => pickSub(s)}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="mp-or-row">
@@ -109,15 +154,15 @@ export default function MultiplayerLobby({ room, onStart, onLeave, error, clearE
                 <span className="mp-or-line" />
               </div>
 
-              <div className="mp-custom-field">
+              <div className={`mp-custom-field ${custom ? 'is-active' : ''}`}>
                 <SparkIcon className="custom-spark" />
                 <input
                   className="mp-custom-input"
                   type="text"
                   placeholder="e.g. 90s cartoons, space exploration…"
                   maxLength={100}
-                  value={topic}
-                  onChange={e => { setTopic(e.target.value); setSelHue(265); clearError() }}
+                  value={custom}
+                  onChange={handleCustomChange}
                   autoComplete="off"
                 />
               </div>
@@ -127,7 +172,7 @@ export default function MultiplayerLobby({ room, onStart, onLeave, error, clearE
               <button
                 className="primary-btn mp-start-btn"
                 type="submit"
-                disabled={!topic.trim() || room.players.length < 1}
+                disabled={!topic}
                 style={{ '--h': selHue, '--topic': `oklch(0.5 0.16 ${selHue})`, '--topic-deep': `oklch(0.42 0.17 ${selHue})` }}
               >
                 <span>Start game</span>
@@ -152,6 +197,18 @@ export default function MultiplayerLobby({ room, onStart, onLeave, error, clearE
         </div>
       </div>
     </main>
+  )
+}
+
+function ChevronIcon({ open }) {
+  return (
+    <svg
+      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+      strokeLinecap="round" strokeLinejoin="round"
+      style={{ width: 13, height: 13, marginLeft: 2, transition: 'transform 200ms ease', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }}
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
   )
 }
 
