@@ -42,7 +42,7 @@ export default function MultiplayerQuiz({ room, onSubmit, onLeave }) {
   if (!q) return null
 
   const answered  = myAnswer !== null
-  const timerPct  = (timeLeft / 20) * 100
+  const timerPct  = Math.min(100, (timeLeft / 20) * 100)
   const timerColor = timeLeft > 10 ? 'var(--right)' : timeLeft > 5 ? 'oklch(0.65 0.18 75)' : 'var(--wrong)'
 
   return (
