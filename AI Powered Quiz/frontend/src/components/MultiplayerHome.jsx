@@ -25,15 +25,19 @@ export default function MultiplayerHome({ onBack, onCreate, onJoin, error, clear
 
   return (
     <main className="screen mp-home">
-      <button className="back-btn" onClick={onBack}>
-        <ArrowLeft />
-        <span>Back</span>
-      </button>
+      {mode === 'choose' && (
+        <button className="back-btn" onClick={onBack}>
+          <ArrowLeft />
+          <span>Back</span>
+        </button>
+      )}
 
-      <header className="mp-home-header">
-        <h1 className="lp-title">Play with<br />friends</h1>
-        <p className="lp-tag">Create a room and share the code, or join a friend's game.</p>
-      </header>
+      {mode === 'choose' && (
+        <header className="mp-home-header">
+          <h1 className="lp-title">Play with<br />friends</h1>
+          <p className="lp-tag">Create a room and share the code, or join a friend's game.</p>
+        </header>
+      )}
 
       {mode === 'choose' && (
         <div className="mp-choose">
