@@ -115,6 +115,7 @@ const socketRoom = new Map(); // socketId → code
 
 const ROOM_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const MAX_PLAYERS = 10;
+const READ_SECS = 8;
 const QUESTION_SECS = 20;
 const REVEAL_MS = 5000;
 const ROOM_TTL_MS = 90 * 60 * 1000;
@@ -160,7 +161,9 @@ function roomSnapshot(room, forId) {
   const q = room.quiz?.[room.questionIndex];
   let currentQuestion = null;
   if (q) {
-    if (room.state === "question") {
+    if (room.state === "reading") {
+      currentQuestion = { q: q.q };
+    } else if (room.state === "question") {
       currentQuestion = { q: q.q, options: q.options };
     } else if (room.state === "reveal" || room.state === "finished") {
       currentQuestion = {
@@ -200,6 +203,18 @@ function broadcast(room) {
   );
 }
 
+function startReading(room) {
+  room.state = "reading";
+  room.players.forEach((p) => {
+    p.answer = null;
+  });
+  broadcast(room);
+  room.readingTimeout = setTimeout(() => {
+    room.readingTimeout = null;
+    startQuestion(room);
+  }, READ_SECS * 1000);
+}
+
 function startQuestion(room) {
   room.state = "question";
   room.timeLeft = QUESTION_SECS;
@@ -232,7 +247,7 @@ function reveal(room) {
     room.revealTimeout = null;
     if (room.questionIndex < room.quiz.length - 1) {
       room.questionIndex++;
-      startQuestion(room);
+      startReading(room);
     } else {
       room.state = "finished";
       broadcast(room);
@@ -244,6 +259,7 @@ function destroyRoom(code) {
   const room = rooms.get(code);
   if (!room) return;
   clearInterval(room.timerInterval);
+  clearTimeout(room.readingTimeout);
   clearTimeout(room.revealTimeout);
   clearTimeout(room.ttlTimeout);
   room.players.forEach((_, sid) => socketRoom.delete(sid));
@@ -277,6 +293,7 @@ io.on("connection", (socket) => {
       hue: 265,
       timeLeft: QUESTION_SECS,
       timerInterval: null,
+      readingTimeout: null,
       revealTimeout: null,
       ttlTimeout: null,
     };
@@ -330,7 +347,7 @@ io.on("connection", (socket) => {
       room.quiz = await generateQuestions(cleanTopic);
       room.state = "countdown";
       broadcast(room);
-      setTimeout(() => startQuestion(room), 3000);
+      setTimeout(() => startReading(room), 3000);
     } catch (err) {
       console.error("MP quiz gen error:", err.message);
       room.state = "waiting";
@@ -345,7 +362,7 @@ io.on("connection", (socket) => {
     const room = rooms.get(socketRoom.get(socket.id));
     if (!room || room.state !== "question") return;
     const player = room.players.get(socket.id);
-    if (!player || player.answer !== null) return;
+    if (!player) return;
     if (typeof answerIndex !== "number" || answerIndex < 0 || answerIndex > 3)
       return;
     player.answer = answerIndex;

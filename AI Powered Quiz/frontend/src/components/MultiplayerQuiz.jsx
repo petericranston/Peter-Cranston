@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { CheckIcon, CrossIcon } from '../icons.jsx'
 
+const READ_SECS   = 8
 const REVEAL_SECS = 5
 
 export default function MultiplayerQuiz({ room, onSubmit, onLeave }) {
   const [countNum, setCountNum] = useState(3)
   const [nextIn,   setNextIn]   = useState(REVEAL_SECS)
+  const [readIn,   setReadIn]   = useState(READ_SECS)
 
   // Animate countdown 3-2-1 when state is 'countdown'
   useEffect(() => {
@@ -21,6 +23,14 @@ export default function MultiplayerQuiz({ room, onSubmit, onLeave }) {
     if (room.state !== 'reveal') { setNextIn(REVEAL_SECS); return }
     setNextIn(REVEAL_SECS)
     const t = setInterval(() => setNextIn(n => Math.max(0, n - 1)), 1000)
+    return () => clearInterval(t)
+  }, [room.state, room.questionIndex])
+
+  // Local reading countdown
+  useEffect(() => {
+    if (room.state !== 'reading') { setReadIn(READ_SECS); return }
+    setReadIn(READ_SECS)
+    const t = setInterval(() => setReadIn(n => Math.max(0, n - 1)), 1000)
     return () => clearInterval(t)
   }, [room.state, room.questionIndex])
 
@@ -41,9 +51,11 @@ export default function MultiplayerQuiz({ room, onSubmit, onLeave }) {
 
   if (!q) return null
 
-  const answered  = myAnswer !== null
-  const timerPct  = Math.min(100, (timeLeft / 20) * 100)
+  const answered   = myAnswer !== null
+  const timerPct   = Math.min(100, (timeLeft / 20) * 100)
   const timerColor = timeLeft > 10 ? 'var(--right)' : timeLeft > 5 ? 'oklch(0.65 0.18 75)' : 'var(--wrong)'
+  const readPct    = Math.min(100, (readIn / READ_SECS) * 100)
+  const readColor  = 'var(--topic)'
 
   return (
     <main className="screen mp-quiz" style={{ '--h': hue ?? 265 }}>
@@ -64,7 +76,15 @@ export default function MultiplayerQuiz({ room, onSubmit, onLeave }) {
         </div>
       </div>
 
-      {/* Timer bar (only during question) */}
+      {/* Reading bar */}
+      {state === 'reading' && (
+        <div className="mp-timer-bar" aria-hidden="true">
+          <div className="mp-timer-fill" style={{ width: `${readPct}%`, background: readColor }} />
+          <span className="mp-timer-num" style={{ color: readColor }}>{readIn}</span>
+        </div>
+      )}
+
+      {/* Answer timer bar */}
       {state === 'question' && (
         <div className="mp-timer-bar" aria-hidden="true">
           <div className="mp-timer-fill" style={{ width: `${timerPct}%`, background: timerColor }} />
@@ -93,7 +113,12 @@ export default function MultiplayerQuiz({ room, onSubmit, onLeave }) {
 
       {/* Answers */}
       <section className="quiz-answers" aria-label="Answer options">
-        {q.options.map((opt, i) => {
+        {state === 'reading' && [0, 1, 2, 3].map(i => (
+          <div key={i} className="answer-card is-reading" aria-hidden="true">
+            <span className="answer-letter">{String.fromCharCode(65 + i)}</span>
+          </div>
+        ))}
+        {state !== 'reading' && q.options?.map((opt, i) => {
           let cardState = ''
           if (state === 'reveal') {
             if (i === q.correct)          cardState = 'is-correct'
@@ -106,8 +131,8 @@ export default function MultiplayerQuiz({ room, onSubmit, onLeave }) {
             <button
               key={i}
               className={`answer-card ${cardState}`}
-              onClick={() => !answered && state === 'question' && onSubmit(i)}
-              disabled={answered || state !== 'question'}
+              onClick={() => state === 'question' && onSubmit(i)}
+              disabled={state !== 'question'}
             >
               <span className="answer-letter">{String.fromCharCode(65 + i)}</span>
               <span className="answer-text">{opt}</span>

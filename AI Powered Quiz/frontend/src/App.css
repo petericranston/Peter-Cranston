@@ -1166,6 +1166,14 @@ body:has(.screen.mp-quiz)::before { opacity: 0; }
   margin-left: 4px;
 }
 
+/* Reading phase placeholder cards */
+.answer-card.is-reading {
+  opacity: 0.25;
+  pointer-events: none;
+  cursor: default;
+}
+.answer-card.is-reading .answer-letter { color: var(--faint); border-color: var(--hairline); }
+
 /* Picked (locked in, not yet revealed) */
 .answer-card.is-picked {
   border-color: oklch(0.5 0.16 var(--h) / 0.5);
